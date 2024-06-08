@@ -1,6 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
-
+import {components, palettes, rounded, shade} from "@tailus/themer"
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -8,15 +7,15 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.tsx',
+        './node_modules/@tailus/themer/dist/components/**/*.{js,ts}'
     ],
-
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: palettes.oz,
         },
     },
-
-    plugins: [forms],
+    plugins: [shade, rounded, components],
 };
