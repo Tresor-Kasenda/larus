@@ -1,19 +1,23 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
 import { PropsWithChildren } from 'react';
+import Card from "@/Components/tailus-ui/Card";
+import {Caption, Text, Title} from "@/Components/tailus-ui/typography";
+import {Link} from "@inertiajs/react";
 
 export default function Guest({ children }: PropsWithChildren) {
     return (
-        <div className="min-h-screen flex flex-col sm:justify-center bg-gray-950 items-center pt-6 sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
-                </Link>
-            </div>
-
-            <div className="w-full sm:max-w-md mt-6 px-6 py-4  bg-gray-950 border border-gray-100/20 shadow-md overflow-hidden sm:rounded-lg">
-                {children}
-            </div>
-        </div>
+        <Card
+            className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-50 dark:bg-gray-925 dark:border-gray-800/50"
+            variant="soft">
+            <Card className="-m-px py-10 px-7 flex flex-col justify-center card-shadow" variant="outlined">
+                <div>
+                    <Title size="lg">Welcome to Tailus UI</Title>
+                    <Text className="my-0" size="base">Please Sign In to continue</Text>
+                </div>
+                <div data-shade="glassy" className="mt-6 space-y-6">
+                    {children}
+                </div>
+            </Card>
+        </Card>
     );
 }

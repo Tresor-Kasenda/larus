@@ -1,10 +1,10 @@
 import { useEffect, FormEventHandler } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+import Label from '@/Components/Label';
 import { Head, Link, useForm } from '@inertiajs/react';
+import Button from "@/Components/tailus-ui/Button";
+import {Input} from "@/Components/Input";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -32,84 +32,92 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <Label size="md" htmlFor="name">Your name</Label>
 
-                    <TextInput
+                    <Input
                         id="name"
+                        type="text"
                         name="name"
                         value={data.name}
-                        className="mt-1 block w-full"
+                        size="lg"
+                        variant="mixed"
+                        placeholder="Your name"
+                        className="mt-1 block w-full px-3"
                         autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
+                        onChange={(e: any) => setData('name', e.target.value)}
                     />
 
-                    <InputError message={errors.name} className="mt-2" />
+                    <InputError message={errors.name} className="mt-2"/>
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                <div>
+                    <Label size="md" htmlFor="email">Your email</Label>
 
-                    <TextInput
+                    <Input
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        size="lg"
+                        variant="mixed"
+                        placeholder="Your email"
+                        className="mt-1 block w-full px-3"
                         autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
+                        onChange={(e: any) => setData('email', e.target.value)}
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <InputError message={errors.email} className="mt-2"/>
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
 
-                    <TextInput
+                <div className="mt-4">
+                    <Label size="md" htmlFor="password">Your Password</Label>
+
+                    <Input
                         id="password"
                         type="password"
                         name="password"
+                        variant="mixed"
+                        size="lg"
                         value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
+                        className="mt-1 block w-full px-3"
+                        autoComplete="current-password"
+                        onChange={(e: any) => setData('password', e.target.value)}
                     />
 
-                    <InputError message={errors.password} className="mt-2" />
+                    <InputError message={errors.password} className="mt-2"/>
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
+                    <Label size="md" htmlFor="password_confirmation">Confirm Password</Label>
 
-                    <TextInput
+                    <Input
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
+                        variant="mixed"
+                        size="lg"
                         value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        required
+                        className="mt-1 block w-full px-3"
+                        autoComplete="current-password"
+                        onChange={(e: any) => setData('password_confirmation', e.target.value)}
                     />
 
-                    <InputError message={errors.password_confirmation} className="mt-2" />
+                    <InputError message={errors.password_confirmation} className="mt-2"/>
                 </div>
 
-                <div className="flex items-center justify-end mt-4">
+                <Button.Root variant="solid" intent="primary"  disabled={processing} size="sm" className="w-full mt-4">
+                    <Button.Label>Register</Button.Label>
+                </Button.Root>
+
+
+                <div className="flex items-center justify-start mt-4">
                     <Link
                         href={route('login')}
-                        className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="underline text-sm text-gray-300"
                     >
                         Already registered?
                     </Link>
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
-                    </PrimaryButton>
                 </div>
             </form>
         </GuestLayout>

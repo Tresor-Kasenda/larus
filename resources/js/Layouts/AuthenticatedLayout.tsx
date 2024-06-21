@@ -1,7 +1,6 @@
-import {PropsWithChildren, ReactNode, useEffect, useRef, useState} from 'react';
+import React, {PropsWithChildren, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {User} from '@/types';
 import {tabs} from "@tailus/themer";
-import Tabs from "@/Components/tailus-ui/tabs/Tabs";
 import Separator from "@/Components/tailus-ui/separator/Separator";
 import {UserSelect} from "@/Components/tailus-ui/UserSelect";
 import {Notifications} from "@/Components/tailus-ui/sidebar/Notifications";
@@ -12,6 +11,47 @@ import Button from "@/Components/tailus-ui/Button/Button";
 const {trigger, indicator} = tabs()
 
 type TabsAppProps = "home" | "store" | "team" | "inbox" | "settings";
+
+type NavLinksProps = {
+  children: ReactNode;
+};
+
+function NavLinks({ children }: NavLinksProps) {
+  const [dimensions, setDimensions] = useState({ width: 0, left: 0 });
+
+  const activeLink = React.Children.toArray(children).find(
+    (child) =>
+      React.isValidElement(child) && child.type === Link && child.props.isActive === true
+  );
+
+  const updateDimensions = useCallback(() => {
+    const activeTrigger = document.getElementById(activeLink?.props?.id || '') as HTMLElement;
+    if (activeTrigger) {
+      setDimensions({
+        width: activeTrigger.offsetWidth,
+        left: activeTrigger.offsetLeft,
+      });
+    }
+  }, [activeLink]);
+
+  useEffect(() => {
+    updateDimensions();
+    document.documentElement.style.setProperty("--current-tab-width", `${dimensions.width}px`);
+  }, [dimensions, updateDimensions]);
+
+  return (
+    <nav className="flex pb-2 h-10 relative">
+      <span
+        className={indicator({
+          indicatorVariant: "bottom",
+          intent: "primary",
+          className: "block w-[--current-tab-width] left-[--current-tab-left] transition-[left,width] duration-300 ease-in-out",
+        })}
+      ></span>
+      {children}
+    </nav>
+  );
+}
 
 export default function Authenticated({user, header, children}: PropsWithChildren<{ user: User, header?: ReactNode }>) {
     const [state, setState] = useState<TabsAppProps>("home");
@@ -45,18 +85,13 @@ export default function Authenticated({user, header, children}: PropsWithChildre
                         </div>
                     </div>
                     <div className="flex gap-1">
-                        <nav className="flex pb-2 h-10 relative">
-                            <span className={indicator({
-                                indicatorVariant: "bottom",
-                                intent: "primary",
-                                className: "block w-4"
-                            })}></span>
-                            <Link link="#" label="Home"/>
-                            <Link link="#" label="Store"/>
-                            <Link link="#" label="Team"/>
-                            <Link link="#" label="Inbox"/>
-                            <Link link="#" label="Settings"/>
-                        </nav>
+                        <NavLinks>
+                            <Link link="/" label="Home" isActive={true}/>
+                            <Link link="/store" label="Store"/>
+                            <Link link="/team" label="Team"/>
+                            <Link link="/inbox" label="Inbox"/>
+                            <Link link="/settings" label="Settings"/>
+                        </NavLinks>
                     </div>
                 </div>
             </header>
@@ -67,7 +102,7 @@ export default function Authenticated({user, header, children}: PropsWithChildre
     );
 }
 const Link = ({link, label, isActive = false}: { link: string, label: string, isActive?: boolean }) => (
-    <Button.Root href={link} size="sm" variant="ghost" intent="gray">
+    <Button.Root href={link} size="sm" variant="ghost" intent="gray" id={link}>
         <Button.Label>
             {label}
         </Button.Label>
