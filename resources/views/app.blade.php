@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html
         lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-        data-palette="oz"
-        data-shade="900"
-        data-rounded="large"
+        data-palette="nature"
+        data-shade="glassy"
+        data-rounded="default"
 >
 <head>
     <meta charset="utf-8">

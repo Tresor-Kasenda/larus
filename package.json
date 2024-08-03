@@ -15,7 +15,7 @@
         "@vitejs/plugin-react": "^4.2.0",
         "autoprefixer": "^10.4.19",
         "axios": "^1.6.4",
-        "gatsby-plugin-postcss": "^6.13.1",
+        "gatsby-plugin-postcss": "^3.7.0",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.38",
         "react": "^18.2.0",
@@ -25,9 +25,13 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@radix-ui/react-accordion": "^1.2.0",
         "@radix-ui/react-avatar": "^1.0.4",
+        "@radix-ui/react-checkbox": "^1.1.0",
         "@radix-ui/react-dropdown-menu": "^2.0.6",
+        "@radix-ui/react-label": "^2.1.0",
         "@radix-ui/react-popover": "^1.0.7",
+        "@radix-ui/react-progress": "^1.1.0",
         "@radix-ui/react-select": "^2.0.0",
         "@radix-ui/react-separator": "^1.0.3",
         "@radix-ui/react-tabs": "^1.0.4",

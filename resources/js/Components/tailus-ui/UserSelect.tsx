@@ -3,8 +3,9 @@ import {AdminAvatar} from "./AdminAvatar"
 import {type TriggerProps} from "@tailus/themer"
 import Select from "@/Components/tailus-ui/select/Select";
 import {Text} from "@/Components/tailus-ui/typography";
+import {User} from '@/types';
 
-export const UserSelect = ({variant = "mixed"}: { variant?: TriggerProps["variant"] }) => {
+export const UserSelect = ({variant = "mixed", user: User}: { variant?: TriggerProps["variant"] , user: User}) => {
     return (
         <Select.Root defaultValue="meschacirung">
             <Select.Trigger variant={variant} className="pl-1.5 pr-2 py-2" aria-label="Accounts">

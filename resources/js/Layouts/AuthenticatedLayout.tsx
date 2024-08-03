@@ -1,110 +1,126 @@
-import React, {PropsWithChildren, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
+import React, {PropsWithChildren, ReactNode,  useState} from 'react';
 import {User} from '@/types';
-import {tabs} from "@tailus/themer";
-import Separator from "@/Components/tailus-ui/separator/Separator";
 import {UserSelect} from "@/Components/tailus-ui/UserSelect";
-import {Notifications} from "@/Components/tailus-ui/sidebar/Notifications";
-import {UserDropdown} from "@/Components/tailus-ui/UserDropdown";
 import {Link as ReactLink} from '@inertiajs/react'
+import * as Accordion from "@radix-ui/react-accordion";
 import Button from "@/Components/tailus-ui/Button/Button";
+import {Search} from "@/Components/Search";
+import {ChevronDown, HelpCircle, Home, Inbox, Settings, Store, Users, X} from "lucide-react";
+import Card from '@/Components/tailus-ui/Card';
+import {button} from "@tailus/themer";
+import {Title, Text} from "@/Components/tailus-ui/typography";
+import Progress from '@/Components/Progress';
 
-const {trigger, indicator} = tabs()
+export const SubLink = ({ isActive=false, label, link }: { isActive?: boolean, label: string, link: string }) => (
+    <a href={link} className={button.ghost({ intent: "gray", size: "md", className:"pl-[42px] pr-3 text-sm w-full justify-start" })}>
+        {label}
+    </a>
+)
 
-type TabsAppProps = "home" | "store" | "team" | "inbox" | "settings";
-
-type NavLinksProps = {
-  children: ReactNode;
-};
-
-function NavLinks({ children }: NavLinksProps) {
-  const [dimensions, setDimensions] = useState({ width: 0, left: 0 });
-
-  const activeLink = React.Children.toArray(children).find(
-    (child) =>
-      React.isValidElement(child) && child.type === Link && child.props.isActive === true
-  );
-
-  const updateDimensions = useCallback(() => {
-    const activeTrigger = document.getElementById(activeLink?.props?.id || '') as HTMLElement;
-    if (activeTrigger) {
-      setDimensions({
-        width: activeTrigger.offsetWidth,
-        left: activeTrigger.offsetLeft,
-      });
-    }
-  }, [activeLink]);
-
-  useEffect(() => {
-    updateDimensions();
-    document.documentElement.style.setProperty("--current-tab-width", `${dimensions.width}px`);
-  }, [dimensions, updateDimensions]);
-
-  return (
-    <nav className="flex pb-2 h-10 relative">
-      <span
-        className={indicator({
-          indicatorVariant: "bottom",
-          intent: "primary",
-          className: "block w-[--current-tab-width] left-[--current-tab-left] transition-[left,width] duration-300 ease-in-out",
-        })}
-      ></span>
-      {children}
-    </nav>
-  );
+export const LinkGroup = ({ label, icon, children }:{label:string, icon?:ReactNode, children:ReactNode}) => {
+    return (
+        <Accordion.Item value={label}>
+            <Accordion.Header>
+                <Accordion.Trigger className={button.ghost({ intent: "gray", size: "md", className:"gap-3.5 px-3 text-sm w-full justify-start" })}>
+                    <span className="size-4 *:size-4">
+                        {icon}
+                    </span>
+                    {label}
+                    <ChevronDown className="size-4 ml-auto opacity-75 ease-[cubic-bezier(0.87,_0,_0.13,_1)] transition-transform duration-300 group-data-[state=open]:rotate-180"/>
+                </Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content className="space-y-1 overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
+                {children}
+            </Accordion.Content>
+        </Accordion.Item>
+    )
 }
 
-export default function Authenticated({user, header, children}: PropsWithChildren<{ user: User, header?: ReactNode }>) {
-    const [state, setState] = useState<TabsAppProps>("home");
-    const spanRef = useRef<HTMLSpanElement>(null);
 
-    useEffect(() => {
-        const activeTrigger = document.getElementById(state) as HTMLElement;
-        if (spanRef.current) {
-            spanRef.current.style.left = activeTrigger.offsetLeft + "px";
-            spanRef.current.style.width = activeTrigger.offsetWidth + "px";
-        }
-    }, [state]);
+export default function Authenticated({user, header, children}: PropsWithChildren<{ user: User, header?: ReactNode }>) {
+    const [isBannerVisible, setIsBannerVisible] = useState(true)
     return (
         <>
-            <header className="fixed top-0 z-10 w-full border-b feedback-bg">
-                <div className="max-w-6xl mx-auto px-5">
-                    <div className="py-4 flex items-center justify-between">
-                        <div className="flex gap-4 items-center h-7">
-                            <ReactLink href="/" hidden className="sm:block">
-
+            <div data-shade="925"
+                 className="grid overflow-hidden [grid-template-columns:auto_1fr] w-full bg-gray-50/50 dark:bg-[--ui-bg] rounded-[--card-radius]">
+                <div className="flex overflow-hidden">
+                    <div className="w-64 flex flex-col gap-4 h-[100vh] p-4">
+                        <Search/>
+                        <div className="space-y-1">
+                            <ReactLink href="#" label="Home" >
+                                <Home/>
                             </ReactLink>
-                            <Separator hidden className="rotate-12 sm:block" orientation="vertical"/>
-                            <UserSelect variant="plain"/>
+                            <Accordion.Root type="multiple" className="space-y-1">
+                                <LinkGroup label="Store" icon={<Store/>}>
+                                    <SubLink label="Customers" link="#"/>
+                                    <SubLink label="Orders" link="#"/>
+                                    <SubLink label="Products" link="#"/>
+                                </LinkGroup>
+                                <LinkGroup label="Team" icon={<Users/>}>
+                                    <SubLink label="Link" link="#"/>
+                                    <SubLink label="Link" link="#"/>
+                                    <SubLink label="Link" link="#"/>
+                                </LinkGroup>
+                                <LinkGroup label="Settings" icon={<Settings/>}>
+                                    <SubLink label="Link" link="#"/>
+                                    <SubLink label="Link" link="#"/>
+                                    <SubLink label="Link" link="#"/>
+                                </LinkGroup>
+                            </Accordion.Root>
+                            <ReactLink href="#" label="Inbox">
+                                <Inbox/>
+                            </ReactLink>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <Link link="#" label="Help"/>
-                            <Notifications/>
-                            <div className="hidden sm:block">
-                                <UserDropdown user={user}/>
-                            </div>
+                        <div className="h-fit mt-auto space-y-4">
+                            <ReactLink href="#" label="Help">
+                                <HelpCircle/>
+                            </ReactLink>
+                            {
+                                isBannerVisible && (
+                                    <Card variant="soft"
+                                          className="[--card-padding:1.25rem] relative dark:[--ui-soft-bg:theme(colors.gray.500/0.10)]">
+                                        <Button.Root className="absolute right-2 top-2" size="xs" variant="ghost"
+                                                     intent="gray" onClick={() => setIsBannerVisible(false)}>
+                                            <Button.Icon type="only" size="xs">
+                                                <X/>
+                                            </Button.Icon>
+                                        </Button.Root>
+                                        <Title as="div" size="base" className="text-sm">Storage almost full</Title>
+                                        <Text size="sm" className="mb-0 mt-2">Upgrade your plan to get more storage</Text>
+                                        <Progress.Root
+                                            value={80}
+                                            data-orientation="vertical"
+                                            size="sm"
+                                            className="mt-4"
+                                        >
+                                            <Progress.Indicator className="w-4/5" intent="warning" loading="warning"
+                                                                complete="danger"/>
+                                        </Progress.Root>
+                                        <Button.Root variant="outlined" intent="gray" size="xs"
+                                                     className="font-medium mt-4">
+                                            <Button.Label className="text-primary-600 dark:text-primary-400">
+                                                Upgrade plan
+                                            </Button.Label>
+                                        </Button.Root>
+                                    </Card>
+                                )
+                            }
+                            <UserSelect user={user}/>
                         </div>
-                    </div>
-                    <div className="flex gap-1">
-                        <NavLinks>
-                            <Link link="/" label="Home" isActive={true}/>
-                            <Link link="/store" label="Store"/>
-                            <Link link="/team" label="Team"/>
-                            <Link link="/inbox" label="Inbox"/>
-                            <Link link="/settings" label="Settings"/>
-                        </NavLinks>
                     </div>
                 </div>
-            </header>
-            <main className="mt-28 h-full max-w-6xl mx-auto py-6 px-5">
-                {children}
-            </main>
+                <div data-shade="900"
+                     className="grid [grid-template-rows:auto_1fr] border m-0.5 rounded-[calc(var(--card-radius)-2px)] shadow shadow-gray-600/10 bg-[--ui-bg]">
+                    <header hidden className="p-3 border-b items-center sm:flex justify-between">
+                        <Title size="base" weight="medium">Dashboard</Title>
+                    </header>
+
+                    <main>
+                        {children}
+                    </main>
+                </div>
+            </div>
+
         </>
     );
 }
-const Link = ({link, label, isActive = false}: { link: string, label: string, isActive?: boolean }) => (
-    <Button.Root href={link} size="sm" variant="ghost" intent="gray" id={link}>
-        <Button.Label>
-            {label}
-        </Button.Label>
-    </Button.Root>
-)
